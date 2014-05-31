@@ -1,0 +1,19 @@
+{
+  "name": "explore-neo4j",
+  "version": "0.0.0",
+  "private": "true",
+  "description": "explore neo4j graph database",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nomilous/neo4j.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nomilous/neo4j/issues"
+  },
+  "dependencies": {
+    "ipso": "0.0.22",
+    "request": "~2.36.0"
+  }
+}
