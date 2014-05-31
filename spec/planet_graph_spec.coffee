@@ -31,7 +31,12 @@ describe 'planets', ->
 
             json: 
 
-                query: "CREATE (s:Star {name: 'Sun'} ) RETURN s"
+                query: """
+
+                    CREATE (s:Star {name: 'Sun'} )
+                    RETURN s
+
+                """
 
                 # params: props: name: 'Sun'
 
@@ -174,4 +179,34 @@ describe 'planets', ->
 
                     planets.should.eql ['Mercury','Mars','Venus','Earth','Neptune','Uranus','Saturn','Jupiter']
                     done()
+
+
+    it 'can find planets by relationship to sun', 
+
+        ipso (done, request) ->
+
+
+
+            request.post 'http://localhost:7474/db/data/cypher',
+
+                json:
+
+                    query: """
+                        MATCH (planet)-[:SATELITE_OF]->(star:Star)
+                        WHERE star.name = 'Sun'
+                        RETURN planet
+
+                    """
+
+                (err, res, body) ->
+
+                    planets = for row in body.data
+
+                        (for column in row
+
+                            column.data.name)[0]
+
+                    planets.should.eql [ 'Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune' ]
+                    done()
+
 
