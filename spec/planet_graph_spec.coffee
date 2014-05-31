@@ -235,3 +235,32 @@ describe 'planets', ->
                         moons.should.eql [ 'Io', 'Europa', 'Ganymede', 'Calisto' ]
                         done()
 
+
+        it 'can find planets with moons by path match', 
+
+            ipso (done, request) ->
+
+                request.post 'http://localhost:7474/db/data/cypher',
+
+                    json:
+
+                        query: """
+
+                            MATCH ()-[:SATELITE_OF]-(planet)-[:SATELITE_OF]->()
+                            RETURN DISTINCT planet
+
+                        """
+
+                    (err, res, body) ->
+
+                        planets = for row in body.data
+
+                            (for column in row
+
+                                column.data.name)[0]
+
+                        planets.should.eql [ 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune' ]
+                        done()
+
+
+
