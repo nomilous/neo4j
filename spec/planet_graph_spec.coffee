@@ -185,8 +185,6 @@ describe 'planets', ->
 
         ipso (done, request) ->
 
-
-
             request.post 'http://localhost:7474/db/data/cypher',
 
                 json:
@@ -209,4 +207,31 @@ describe 'planets', ->
                     planets.should.eql [ 'Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune' ]
                     done()
 
+
+        it 'can find moons by planet', 
+
+            ipso (done, request) ->
+
+                request.post 'http://localhost:7474/db/data/cypher',
+
+                    json:
+
+                        query: """
+
+                            MATCH (moon)-[:SATELITE_OF]->(planet)
+                            WHERE planet.name = 'Jupiter'
+                            RETURN moon
+
+                        """
+
+                    (err, res, body) ->
+
+                        moons = for row in body.data
+
+                            (for column in row
+
+                                column.data.name)[0]
+
+                        moons.should.eql [ 'Io', 'Europa', 'Ganymede', 'Calisto' ]
+                        done()
 
