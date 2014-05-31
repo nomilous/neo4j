@@ -1,4 +1,6 @@
 {ipso} = require 'ipso'
+{defer} = require 'when'
+sequence = require 'when/sequence'
 
 describe 'planets', ->
 
@@ -263,4 +265,48 @@ describe 'planets', ->
                         done()
 
 
+
+        it 'can find all nodes along the path from Calisto to Triton', 
+
+            ipso (done, request) ->
+
+                request.post 'http://localhost:7474/db/data/cypher',
+
+                    json: 
+
+                        query: """
+
+                            MATCH ( { name: 'Calisto' })-[r*]-({name: 'Triton'})
+                            return r
+
+                        """
+
+                    (err, res, body) ->
+
+
+                        getNode = (path) ->
+
+                            action = defer()
+
+                            request.get path, (err, res, body) ->
+                
+                                result = JSON.parse body
+
+                                action.resolve result.data.name
+
+                            action.promise
+
+
+                        sequence( for relationship in body.data[0][0]
+
+                            do (relationship) -> -> getNode relationship.end
+
+                        ).then (results) ->
+
+                            results.should.eql [ 'Neptune', 'Sun', 'Sun', 'Jupiter' ]
+                            done()
+                        
+
+
+                       
 

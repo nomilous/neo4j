@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "ipso": "0.0.22",
-    "request": "~2.36.0"
+    "request": "~2.36.0",
+    "when": "~3.2.2"
   }
 }
