@@ -2,7 +2,7 @@
 {defer} = require 'when'
 sequence = require 'when/sequence'
 
-describe 'planets', ->
+describe 'solarsystem graph', ->
 
     before ipso (done, request) ->
 
@@ -14,7 +14,7 @@ describe 'planets', ->
 
             json:
 
-                query: 'MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r'
+                query: 'MATCH (node) OPTIONAL MATCH (node)-[relation]-() DELETE node, relation'
 
             (err, res, body) ->
 
@@ -297,9 +297,9 @@ describe 'planets', ->
                             action.promise
 
 
-                        sequence( for relationship in body.data[0][0]
+                        sequence( for relation in body.data[0][0]
 
-                            do (relationship) -> -> getNode relationship.end
+                            do (relation) -> -> getNode relation.end  # ending node of the relation
 
                         ).then (results) ->
 
