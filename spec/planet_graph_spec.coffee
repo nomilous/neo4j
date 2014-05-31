@@ -74,14 +74,14 @@ describe 'planets', ->
                 MATCH (star:Star)
                 WHERE star.name = 'Sun'
 
-                CREATE (mercury :Planet {name: 'Mercury'})
-                CREATE (venus :Planet {name: 'Venus'})
-                CREATE (earth :Planet {name: 'Earth'})
-                CREATE (mars :Planet {name: 'Mars'})
-                CREATE (jupiter :Planet {name: 'Jupiter'})
-                CREATE (saturn :Planet {name: 'Saturn'})
-                CREATE (uranus :Planet {name: 'Uranus'})
-                CREATE (neptune :Planet {name: 'Neptune'})
+                CREATE (mercury :Planet {name: 'Mercury', diameter: 3813})
+                CREATE (venus :Planet {name: 'Venus', diameter: 12063})
+                CREATE (earth :Planet {name: 'Earth', diameter: 12712})
+                CREATE (mars :Planet {name: 'Mars', diameter: 6762})
+                CREATE (jupiter :Planet {name: 'Jupiter', diameter: 142374})
+                CREATE (saturn :Planet {name: 'Saturn', diameter: 120115})
+                CREATE (uranus :Planet {name: 'Uranus', diameter: 50848})
+                CREATE (neptune :Planet {name: 'Neptune', diameter: 48305})
 
                 CREATE (mercury)-[:SATELITE_OF]->(star)
                 CREATE (venus)-[:SATELITE_OF]->(star)
@@ -144,8 +144,34 @@ describe 'planets', ->
             (err, res, body) ->
 
                 # console.log status: res.statusCode
-                console.log body
+                # console.log body
                 done()
 
 
-    it '', ->
+    it 'can order planets by diameter', 
+
+        ipso (done, request) ->
+
+            request.post 'http://localhost:7474/db/data/cypher',
+
+                json: 
+
+                    query: """
+
+                        MATCH (p:Planet)
+                        RETURN p
+                        ORDER BY p.diameter ASC
+
+                    """
+
+                (err, res, body) ->
+
+                    planets = for row in body.data
+
+                        (for column in row
+
+                            column.data.name)[0]
+
+                    planets.should.eql ['Mercury','Mars','Venus','Earth','Neptune','Uranus','Saturn','Jupiter']
+                    done()
+
